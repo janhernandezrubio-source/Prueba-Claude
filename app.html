@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crear presupuesto | PresuRápido</title>
+  <meta name="description" content="Crea un presupuesto profesional en PDF desde el móvil en 2 minutos. Gratis y sin registro.">
+  <meta name="theme-color" content="#1f5eff">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <a class="logo" href="index.html">Presu<span>Rápido</span></a>
+      <button class="btn btn-small btn-accent" id="btn-pro" type="button">Hazte Pro</button>
+    </div>
+  </header>
+
+  <main class="container app-main">
+    <div class="app-acciones">
+      <button class="btn btn-secondary btn-small" id="btn-nuevo" type="button">Nuevo presupuesto</button>
+      <button class="btn btn-secondary btn-small" id="btn-duplicar" type="button">Nuevo con estas partidas</button>
+    </div>
+
+    <section class="card">
+      <h2>Presupuesto</h2>
+      <div class="grid grid-3">
+        <label>Número
+          <input data-campo="numero" placeholder="2026-001">
+        </label>
+        <label>Fecha
+          <input type="date" data-campo="fecha">
+        </label>
+        <label>Válido durante (días)
+          <input type="number" min="1" inputmode="numeric" data-campo="validezDias">
+        </label>
+      </div>
+      <p class="ayuda" id="ayuda-numero"></p>
+    </section>
+
+    <section class="card">
+      <h2>Tus datos</h2>
+      <div class="grid grid-2">
+        <label>Nombre o empresa <input data-campo="empresa.nombre" autocomplete="organization"></label>
+        <label>NIF / CIF <input data-campo="empresa.nif"></label>
+        <label>Dirección <input data-campo="empresa.direccion" autocomplete="street-address"></label>
+        <label>Teléfono <input type="tel" data-campo="empresa.telefono" autocomplete="tel"></label>
+        <label>Email <input type="email" data-campo="empresa.email" autocomplete="email"></label>
+      </div>
+      <p class="ayuda">Se guardan en este dispositivo para el próximo presupuesto.</p>
+    </section>
+
+    <section class="card">
+      <h2>Cliente</h2>
+      <div class="grid grid-2">
+        <label>Nombre <input data-campo="cliente.nombre"></label>
+        <label>NIF / DNI <input data-campo="cliente.nif"></label>
+        <label>Dirección de la obra <input data-campo="cliente.direccion"></label>
+        <label>Teléfono <input type="tel" data-campo="cliente.telefono"></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Partidas
+        <label style="min-width: 200px;">
+          <select id="sel-plantilla" aria-label="Cargar partidas de ejemplo">
+            <option value="">Cargar ejemplo de oficio…</option>
+          </select>
+        </label>
+      </h2>
+      <div id="partidas"></div>
+      <div class="partidas-botones">
+        <button class="btn btn-secondary btn-small" id="btn-anadir" type="button">+ Añadir partida</button>
+        <button class="btn btn-secondary btn-small" id="btn-catalogo" type="button">Desde mi catálogo <span class="pro-badge">PRO</span></button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Totales</h2>
+      <div class="grid grid-2">
+        <label>IVA
+          <select data-campo="iva">
+            <option value="21">21 % (general)</option>
+            <option value="10">10 % (reformas de vivienda)</option>
+            <option value="4">4 %</option>
+            <option value="0">0 % / exento</option>
+          </select>
+        </label>
+        <label>Descuento (%)
+          <input type="number" min="0" max="100" step="0.5" inputmode="decimal" data-campo="descuento">
+        </label>
+      </div>
+      <div class="totales" id="totales" style="margin-top: 16px;"></div>
+    </section>
+
+    <section class="card">
+      <h2>Condiciones</h2>
+      <div class="grid">
+        <label>Forma de pago
+          <input data-campo="formaPago" placeholder="50 % al aceptar, 50 % al terminar. Transferencia a ES00 …">
+        </label>
+        <label>Condiciones y notas
+          <textarea data-campo="condiciones"></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="card-marca">
+      <h2>Tu marca <span class="pro-badge">PRO</span></h2>
+      <div class="grid grid-2">
+        <label>Logo
+          <input type="file" accept="image/png,image/jpeg" id="in-logo">
+          <img class="logo-preview" id="logo-preview" alt="" hidden>
+          <button class="btn-link btn-danger-link" id="btn-quitar-logo" type="button" hidden>Quitar logo</button>
+        </label>
+        <label>Color del presupuesto
+          <input type="color" class="color-input" id="in-color">
+        </label>
+      </div>
+      <p class="ayuda">Con Pro, el PDF sale con tu logo, tu color y sin la marca de PresuRápido.</p>
+    </section>
+
+    <section class="card" id="card-historial">
+      <h2>Historial <span class="pro-badge">PRO</span></h2>
+      <ul class="lista" id="historial"></ul>
+      <p class="ayuda">Cada PDF que descargas se guarda aquí, en este dispositivo.</p>
+    </section>
+  </main>
+
+  <div class="barra-accion">
+    <div class="container">
+      <div class="total-barra"><small>Total con IVA</small><span id="total-barra">0,00 €</span></div>
+      <button class="btn" id="btn-pdf" type="button">Descargar PDF</button>
+    </div>
+  </div>
+
+  <div class="modal-fondo" id="modal-pro" role="dialog" aria-modal="true" aria-labelledby="modal-pro-titulo">
+    <div class="modal">
+      <h2 id="modal-pro-titulo">PresuRápido Pro</h2>
+      <p>Pago único, para siempre. Sin suscripciones.</p>
+      <ul>
+        <li>Tu logo y tu color en el PDF</li>
+        <li>Sin la marca "Hecho con PresuRápido"</li>
+        <li>Catálogo con tus partidas y precios habituales</li>
+        <li>Numeración automática de presupuestos</li>
+        <li>Historial para reabrir y duplicar presupuestos</li>
+      </ul>
+      <div id="pro-estado"></div>
+      <div class="acciones">
+        <a class="btn btn-accent" id="btn-comprar" target="_blank" rel="noopener">Comprar Pro</a>
+        <label>¿Ya lo compraste? Pega tu clave de licencia
+          <input id="in-licencia" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" autocomplete="off">
+        </label>
+        <button class="btn btn-secondary" id="btn-activar" type="button">Activar licencia</button>
+        <button class="btn-link" id="btn-cerrar-pro" type="button">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-fondo" id="modal-catalogo" role="dialog" aria-modal="true" aria-labelledby="modal-cat-titulo">
+    <div class="modal">
+      <h2 id="modal-cat-titulo">Mi catálogo</h2>
+      <p class="ayuda">Toca una partida para añadirla. Guarda partidas nuevas con el botón ★ de cada línea.</p>
+      <ul class="lista" id="catalogo"></ul>
+      <div class="acciones">
+        <button class="btn-link" id="btn-cerrar-catalogo" type="button">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/jspdf.plugin.autotable.min.js"></script>
+  <script src="config.js"></script>
+  <script src="plantillas.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
